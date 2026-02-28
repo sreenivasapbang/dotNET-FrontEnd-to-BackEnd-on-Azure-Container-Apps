@@ -44,10 +44,10 @@ jobs:
           AZURE_CREDENTIALS: ${{ secrets.AzureSPN }}
 
       - name: Provision Azure Resources
-        run: azd provision
+        run: azd provision --no-prompt
         env:
-          AZURE_ENV_NAME: ${{ vars.RESOURCE_GROUP_NAME }}
-          AZURE_LOCATION: ${{ vars.REGION }}
+          AZURE_ENV_NAME: "sreestore02"
+          AZURE_LOCATION: "westus"
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy changes to Azure Container Apps
