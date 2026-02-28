@@ -22,6 +22,10 @@ var tags = { 'azd-env-name': environmentName }
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
+write-host ('location is  ' + location)
+write-host ('environment name is ' + environmentName)
+write-host ('subscription id is ' + subscription().id)
+
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: environmentName
   location: location
