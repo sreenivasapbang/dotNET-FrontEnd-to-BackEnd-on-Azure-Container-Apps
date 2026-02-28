@@ -1,0 +1,49 @@
+name: Trigger auto deployment for sreestore02
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ sreenivasapbang-patch-1 ]
+    paths:
+    - '**'
+    - '.github/workflows/sreestore02-AutoDeployTrigger-a0180cb6-f853-4089-9f52-f4fe8f2fe6a8.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.SREESTORE02_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.SREESTORE02_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.SREESTORE02_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          _targetLabelKey_: _targetLabel_
+          registryUrl: 
+          registryUsername: ${{ secrets.SREESTORE02_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.SREESTORE02_REGISTRY_PASSWORD }}
+          containerAppName: sreestore02
+          resourceGroup: sreestore02rg
+          imageToBuild: default/[parameters('containerAppName')]:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
